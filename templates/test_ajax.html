@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>测试ajax</title>
+    <script src="/static/js/jquery-3.2.1.js"></script>
+</head>
+<body>
+{##}
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/dog/dog.swf?3?" width="300" height="225"><param name="movie" value="http://cdn.abowman.com/widgets/dog/dog.swf?3?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param><param name="bgcolor" value="FFFFFF"/></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/newtonscradle/newtonsCradle.swf?" width="300" height="225"><param name="movie" value="http://cdn.abowman.com/widgets/newtonscradle/newtonsCradle.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param></object>
+
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/turtles/turtle.swf?" width="300" height="200"><param name="movie" value="http://cdn.abowman.com/widgets/turtles/turtle.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param><param name="scale" value="noscale"/><param name="salign" value="tl"/></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/fish/fish.swf?up_fishColor6=F45540&up_fishColor9=F45540&up_fishName=Fish&up_fishColor4=F45540&up_numFish=6&up_foodColor=FCB347&up_fishColor3=F45540&up_fishColor1=3B2B28&up_fishColor7=30D143&up_backgroundColor=F0F7FF&up_fishColor10=F45540&up_fishColor5=F45540&up_fishColor8=F45540&up_fishColor2=F45540&up_backgroundImage=http://&" width="300" height="200"><param name="movie" value="http://cdn.abowman.com/widgets/fish/fish.swf?up_fishColor6=F45540&up_fishColor9=F45540&up_fishName=Fish&up_fishColor4=F45540&up_numFish=6&up_foodColor=FCB347&up_fishColor3=F45540&up_fishColor1=3B2B28&up_fishColor7=30D143&up_backgroundColor=F0F7FF&up_fishColor10=F45540&up_fishColor5=F45540&up_fishColor8=F45540&up_fishColor2=F45540&up_backgroundImage=http://&"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param><param name="scale" value="noscale"/><param name="salign" value="tl"/></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/treefrog/treefrog.swf?" width="300" height="200"><param name="movie" value="http://cdn.abowman.com/widgets/treefrog/treefrog.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param><param name="scale" value="noscale"/><param name="salign" value="tl"/></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/spider/spider.swf?" width="300" height="200"><param name="movie" value="http://cdn.abowman.com/widgets/spider/spider.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param><param name="scale" value="noscale"/><param name="salign" value="tl"/><param name="bgcolor" value=""/></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/discdrop/discDrop.swf?" width="300" height="225"><param name="movie" value="http://cdn.abowman.com/widgets/discdrop/discDrop.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param><param name="bgcolor" value="FFFFFF"/></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/pendulumclock/pendulumClockV2.swf?" width="300" height="200"><param name="movie" value="http://cdn.abowman.com/widgets/pendulumclock/pendulumClockV2.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param><param name="bgcolor" value=""/></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/stingray/stingray.swf?" width="300" height="200"><param name="movie" value="http://cdn.abowman.com/widgets/stingray/stingray.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param><param name="scale" value="noscale"/><param name="salign" value="tl"/></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/hamster/hamster.swf?" width="300" height="225"><param name="movie" value="http://cdn.abowman.com/widgets/hamster/hamster.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param></object>
+<object type="application/x-shockwave-flash" style="outline:none;" data="http://cdn.abowman.com/widgets/ballclock/ballclock.swf?" width="300" height="220"><param name="movie" value="http://cdn.abowman.com/widgets/ballclock/ballclock.swf?"></param><param name="AllowScriptAccess" value="always"></param><param name="wmode" value="opaque"></param></object>
+<br>
+{#模版全局变量#}
+{{ func.0.1 }}
+
+<form action="/test_ajax/">
+    <input type="text" name="username">
+    <a href="javascript:;" class="submit">提交</a>
+    <div>
+        <img src="/static/img/avator.jpg" alt="">
+    </div>
+</form>
+
+<script>
+
+$(".submit").click(function () {
+    username = $("input").val(),
+    $.ajax({
+        url: "/test/",
+        type: "POST",
+        data: {
+            username: username,
+            csrfmiddlewaretoken: '{{ csrf_token }}'},
+        success:function () {
+            alert("Ok")}
+        }
+    )
+})
+
+</script>
+</body>
+</html>

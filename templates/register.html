@@ -1,0 +1,158 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<!-- saved from url=(0067)http://www.17sucai.com/preview/668095/2017-07-19/perfect/index.html -->
+<html lang="en" class="no-js">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>欢迎注册</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'login/normalize.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'login/demo.css' %}">
+    <!--必要样式-->
+    <link rel="stylesheet" type="text/css" href="{% static 'login/component.css' %}">
+    <!--[if IE]>
+<script src="js/html5.js"></script>
+<![endif]-->
+    <style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+    .en-markup-crop-options {
+        top: 18px !important;
+        left: 50% !important;
+        margin-left: -100px !important;
+        width: 200px !important;
+        border: 2px rgba(255, 255, 255, .38) solid !important;
+        border-radius: 4px !important;
+    }
+
+    .en-markup-crop-options div div:first-of-type {
+        margin-left: 0 !important;
+    }
+
+    input:-webkit-autofill {
+        background-color: transparent;
+    !important;
+        background-image: none;
+    !important;
+        color: #000;
+    !important;
+    }
+
+    .valid_img {
+        float: right;
+        margin-top: 7px;
+    }
+    </style>
+</head>
+<body>
+<div class="container demo-1">
+    <div class="content">
+        <div id="large-header" class="large-header" style="height: 651px;">
+            <canvas id="demo-canvas" width="1366" height="651"></canvas>
+            <div class="logo_box">
+                {#                <h3>^-^ Welcome To JOIN My World! ^-^</h3>#}
+                <form action="/register/" name="f" id="ajaxform" method="post">
+                    {% csrf_token %}
+                    <span id="s1"></span>
+                    <div class="input_outer">
+                        <span class="u_user"></span>
+                        {{ form_obj.username }}
+                    </div>
+                    <span id="s2"></span>
+                    <div class="input_outer">
+                        <span class="us_uer"></span>
+                        {{ form_obj.password }}
+                    </div>
+                    <span id="s3"></span>
+                    <div class="input_outer">
+                        <span class="us_uer"></span>
+                        {{ form_obj.re_password }}
+                    </div>
+                    <span id="s4"></span>
+                    <div class="input_outer">
+                        {{ form_obj.mail }}
+                    </div>
+                    <span id="s5"></span>
+                    <div class="input_outer">
+                        {{ form_obj.valid_code }}
+                        <a href="javascript:;" class="refresh"><img src="/valid_code/" alt="" class="valid_img"></a>
+                    </div>
+                    <span></span>
+                    <div class="mb2"><a class="act-but submit" href="javascript:;" style="color: #FFFFFF">注册</a></div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div><!-- /container -->
+<script src="{% static 'login/TweenLite.min.js' %}"></script>
+<script src="{% static 'login/EasePack.min.js' %}"></script>
+<script src="{% static 'login/rAF.js' %}"></script>
+<script src="{% static 'login/demo-1.js' %}"></script>
+<script src="{% static 'js/jquery-3.2.1.js' %}"></script>
+
+<script>
+
+    // 验证码刷新
+    $(function () {
+        $(".refresh").click(function () {
+            $(".valid_img")[0].src += "?";
+        })
+    })
+
+    // ajax注册验证
+    $(function () {
+        $(".submit").click(function () {
+
+            for (var i=1;i<6;i++){
+                $("#s"+i).text("")
+            }
+
+            var username = $("#id_username").val();
+            var password = $("#id_password").val();
+            var re_password = $("#id_re_password").val();
+            var mail = $("#id_mail").val();
+            var valid_code = $("#id_valid_code").val();
+            var csrf = $("[name='csrfmiddlewaretoken']").val();
+
+            var formData = new FormData();
+
+            formData.append("username", username);
+            formData.append("password", password);
+            formData.append("re_password", re_password);
+            formData.append("mail", mail);
+            formData.append("valid_code", valid_code);
+            formData.append("csrfmiddlewaretoken", csrf);
+
+            $.ajax({
+                url: "/register/",
+                type: "POST",
+                data: formData,
+                processData: false,      // 使用formdata,processData,contentType必须设为false
+                contentType: false,
+                success: function (data) {
+{#                    alert(123);#}
+                    data = JSON.parse(data);
+                    if (data["flag"]) {
+                        location.href = "/"
+                    }
+                    else {
+                        var errors_dict = data["errors"];
+                        console.log(errors_dict);
+                        for (var i in errors_dict) {
+                            console.log(i);
+                            console.log(errors_dict[i]);
+                            $("#s2").text(errors_dict["__all__"]).css({"color": "red"})
+                            $("#id_" + i).parent().prev().text(errors_dict[i]).css({"color": "red"});
+                        }
+                    }
+                },
+                error:function (data) {
+                    alert(123)
+                }
+            })
+        })
+    })
+
+</script>
+</body>
+</html>
