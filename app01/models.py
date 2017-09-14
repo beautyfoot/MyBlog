@@ -86,10 +86,10 @@ class Article(models.Model):
     nid = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=50, verbose_name='文章标题')
     desc = models.CharField(max_length=255, verbose_name='文章描述')
-    read_count = models.IntegerField(default=0)
-    comment_count = models.IntegerField(default=0)
-    up_count = models.IntegerField(default=0)
-    down_count = models.IntegerField(default=0)
+    read_count = models.IntegerField(default=0, verbose_name='阅读次数')
+    comment_count = models.IntegerField(default=0, verbose_name='评论次数')
+    up_count = models.IntegerField(default=0, verbose_name='点赞次数')
+    down_count = models.IntegerField(default=0, verbose_name='被踩次数')
     category = models.ForeignKey(verbose_name='文章类型', to='Category', to_field='nid', null=True)
     create_time = models.DateTimeField(verbose_name='创建时间', auto_now_add=True)
     blog = models.ForeignKey(verbose_name='所属博客', to='MyBlog', to_field='nid')
@@ -120,8 +120,8 @@ class ArticleDetail(models.Model):
     """
     文章详细表
     """
-    nid = models.AutoField(primary_key=True, default=1)
-    content = models.TextField(verbose_name='文章内容', )
+    nid = models.AutoField(primary_key=True)
+    content = models.TextField(verbose_name='文章内容',)
 
     article = models.OneToOneField(verbose_name='所属文章', to='Article', to_field='nid')
 
@@ -142,7 +142,8 @@ class Comment(models.Model):
     parent_id = models.ForeignKey('self', blank=True, null=True, verbose_name='父级评论')
     user = models.ForeignKey(verbose_name='评论者', to='UserInfo', to_field='nid')
 
-    up_count = models.IntegerField(default=0)
+    up_count = models.IntegerField(default=0, verbose_name='点赞次数')
+    down_count = models.IntegerField(default=0, verbose_name='被踩次数')
 
     class Meta:
         verbose_name = "评论"
@@ -159,7 +160,7 @@ class ArticleUpDown(models.Model):
     UpOrDown = models.BooleanField(verbose_name='是否赞', default=False)
 
     class Meta:
-        verbose_name = "点赞"
+        verbose_name = "文章点赞表"
         verbose_name_plural = verbose_name
 
 
@@ -170,6 +171,11 @@ class CommentUp(models.Model):
     nid = models.AutoField(primary_key=True)
     user = models.ForeignKey('UserInfo', null=True)
     comment = models.ForeignKey("Comment", null=True)
+    UpOrDown = models.BooleanField(verbose_name='是否赞', default=False)
+
+    class Meta:
+        verbose_name = "评论点赞表"
+        verbose_name_plural = verbose_name
 
 
 class Tag(models.Model):
@@ -177,9 +183,12 @@ class Tag(models.Model):
     title = models.CharField(verbose_name='标签名称', max_length=32)
     blog = models.ForeignKey(verbose_name='所属博客', to='MyBlog', to_field='nid')
 
+    class Meta:
+        verbose_name = "标签名称表"
+        verbose_name_plural = verbose_name
 
-class
-    (models.Model):
+
+class Article2Tag(models.Model):
     nid = models.AutoField(primary_key=True)
     article = models.ForeignKey(verbose_name='文章', to="Article", to_field='nid')
     tag = models.ForeignKey(verbose_name='标签', to="Tag", to_field='nid')
@@ -188,6 +197,8 @@ class
         unique_together = [
             ('article', 'tag'),
         ]
+        verbose_name = "标签名称和文章关系表"
+        verbose_name_plural = verbose_name
 
 
 class CaptchaTestForm(forms.Form):

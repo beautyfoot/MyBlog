@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^register/', views.register),
     url(r'^index/', views.index),
     url(r'^valid_code/', views.valid_code),
-    url(r'^$', views.index),
+    url(r'^blog/', include('app01.urls')),
 
-    url(r'^test/', views.test),
+    url(r'^$', views.index),
 ]

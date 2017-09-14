@@ -7,7 +7,9 @@ from django.contrib.auth.decorators import login_required
 from app01.models import CaptchaTestForm
 from app01 import forms
 import json
-from django.db.models import Avg, Min, Sum, Max, Count
+from django.db.models import Avg, Min, Sum, Max, Count, F, Q
+from app01.models import Article, Comment, ArticleUpDown, CommentUp, Category
+
 
 # 非ajax方法，且有验证码
 
@@ -45,7 +47,7 @@ def login(request):
             if user:
                 auth.login(request, user)
                 print(request.POST)
-                return HttpResponse('{"status":"success"}')  #content_type='application/json'
+                return HttpResponse('{"status":"success"}')  # content_type='application/json'
             else:
                 return HttpResponse('{"status":"error"}')
         else:
@@ -123,7 +125,7 @@ def register(request):
     return render(request, "register.html", {"form_obj": form_obj})
 
 
-def index(request):
+def index(request, **kwargs):
     '''
     主页
     :param request:
@@ -131,8 +133,141 @@ def index(request):
     '''
     user = request.user.is_authenticated()
     username = request.user.username
-    return render(request, "index.html", {"user": user, "username": username, })
+    article_list = Article.objects.all()
+    category_list = Article.objects.values("category__name").annotate(Count("nid"))
+    tag_list = Article.objects.values("tags__title").annotate(Count("nid"))
+    date_list = Article.objects.datetimes("create_time", "day", order="DESC").annotate(Count("nid"))
 
+    if kwargs.get("classify"):
+        obj = kwargs.get("classify")
+        if obj == "category":
+            obj_name = kwargs.get("para")
+            article_list = Article.objects.filter(category__name=obj_name)
+        elif obj == "tag":
+            obj_name = kwargs.get("para")
+            article_list = Article.objects.filter(tags__title=obj_name)
+        elif obj == "date":
+            year_n = kwargs.get("year")
+            month_n = kwargs.get("month")
+            day_n = kwargs.get("day")
+            article_list = Article.objects.filter(create_time__year=year_n, create_time__month=month_n, create_time__day=day_n)
+
+    return render(request, "index.html",
+                  {"user": user,
+                   "username": username,
+                   "article_list": article_list,
+                   "category_list": category_list,
+                   "tag_list": tag_list,
+                   "date_list": date_list,
+                   })
+
+
+# 个人界面
+
+def showTime(request, **kwargs):
+    """
+    博主界面
+    :param request:
+    :return:
+    """
+    username = kwargs.get("user_site")
+    article_list = Article.objects.filter(blog__user__username=username)
+    category_list = article_list.values("category__name").annotate(Count("nid"))
+    tag_list = article_list.values("tags__title").annotate(Count("nid"))
+    date_list = article_list.datetimes("create_time", "day", order="DESC").annotate(Count("nid"))
+    article_num = len(article_list)
+
+    if kwargs.get("classify"):
+        obj = kwargs.get("classify")
+        if obj == "category":
+            obj_name = kwargs.get("para")
+            article_list = article_list.filter(category__name=obj_name)
+        elif obj == "tag":
+            obj_name = kwargs.get("para")
+            article_list = article_list.filter(tags__title=obj_name)
+        elif obj == "date":
+            year_n = kwargs.get("year")
+            month_n = kwargs.get("month")
+            day_n = kwargs.get("day")
+            article_list = article_list.filter(create_time__year=year_n, create_time__month=month_n, create_time__day=day_n)
+
+    return render(request, "showTime.html",
+                  {"username": username,
+                   "article_list": article_list,
+                   "category_list": category_list,
+                   "tag_list": tag_list,
+                   "date_list": date_list,
+                   "article_num": article_num,
+                   })
+
+
+
+# 文章内容
+
+def articleDetail(request, user_site, article_id):
+    article_obj = Article.objects.filter(nid=article_id).first()
+    comment_obj = Comment.objects.filter(article_id=article_id)
+
+    return render(request, "articleDetail.html", {
+        "article_obj": article_obj,
+        "comment_obj": comment_obj
+    })
+
+
+# 文章点赞
+
+def articleUpDown(request):
+    article_id = request.POST.get("article_id")
+    user_id = request.user.nid
+
+    response = {"flag": True}
+    if ArticleUpDown.objects.filter(user_id=user_id, article_id=article_id):
+        response["flag"] = False
+    else:
+        ArticleUpDown.objects.create(user_id=user_id, article_id=article_id)
+        Article.objects.filter(nid=article_id).update(up_count=F("up_count")+1)
+
+    return HttpResponse(json.dumps(response))
+
+
+# 评论点赞
+
+def commentUpDown(request):
+    comment_id = request.POST.get("comment_id")
+    user_id = request.user.nid
+
+    response = {"flag": True}
+    if CommentUp.objects.filter(user_id=user_id, comment_id=comment_id):
+        response["flag"] = False
+    else:
+        CommentUp.objects.create(user_id=user_id, comment_id=comment_id)
+        Comment.objects.filter(nid=comment_id).update(up_count=F("up_count") + 1)
+
+    return HttpResponse(json.dumps(response))
+
+
+# 评论
+
+def comment(request):
+    user_id = request.user.nid
+    article_id = request.POST.get("article_id")
+    content = request.POST.get("content")
+
+    if request.POST.get("parent_comment_id"):
+        parent_comment_id = int(request.POST.get("parent_comment_id"))
+        comment_obj = Comment.objects.create(user_id=user_id, article_id=article_id, content=content, parent_id_id=parent_comment_id)
+    else:
+        comment_obj = Comment.objects.create(user_id=user_id, article_id=article_id, content=content)
+    Article.objects.filter(nid=article_id).update(comment_count=F("comment_count") + 1)
+
+    responses = {"comment_id": comment_obj.nid,
+                 "comment_createTime": str(comment_obj.create_time)[:16],
+                 "up_count": comment_obj.up_count,
+                 "down_count": comment_obj.down_count}
+
+    return HttpResponse(json.dumps(responses))
+
+# 验证码
 
 def valid_code(request):
     '''
@@ -166,25 +301,6 @@ def valid_code(request):
 
     return HttpResponse(f.getvalue())
 
-
-# 个人界面
-
-def show_time(request):
-
-    Artcile.objects.values("category__blog").aggregate()
-
-    return HttpResponse("OK")
-
-
-
-# 测试代码
-
-def test(request):
-    if request.method == "POST":
-        print("OK")
-        user = request.POST.get("username", "")
-        print(user)
-    return render(request, "test_ajax.html")
 
 
 # 模版全局变量

@@ -13,7 +13,7 @@
     <!--必要样式-->
     <link rel="stylesheet" type="text/css" href="{% static 'login/component.css' %}">
     <!--[if IE]>
-<script src="js/html5.js"></script>
+    <script src="js/html5.js"></script>
 <![endif]-->
     <style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
     .en-markup-crop-options {
@@ -38,10 +38,10 @@
     !important;
     }
 
-    .valid_img {
-        float: right;
-        margin-top: 7px;
-    }
+{#    .valid_img {#}
+{#        float: right;#}
+{#        margin-top: 7px;#}
+{#    }#}
     </style>
 </head>
 <body>
@@ -69,7 +69,7 @@
                         <input name="valid_code" class="text valid_code"
                                style="color: #FFFFFF !important; position:absolute; z-index:100;" value=""
                                type="text" placeholder="请输入验证码">
-                        <a href="javascript:;" class="refresh"><img src="/valid_code/" alt="" class="valid_img"></a>
+                        <a href="javascript:;" class="refresh"><img src="/valid_code/" alt="" class="valid_img" style="float: right;margin-top: 7px"></a>
                     </div>
                     {#验证码captcha部分#}
                     {#                    <div class="input_outer">#}

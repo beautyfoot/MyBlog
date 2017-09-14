@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'bootstrap_admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,6 +54,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'MyBlog.urls'
 
+# 引入第三方插件bootscrap
+from django.conf import global_settings
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -64,6 +69,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',  # 以下四个为bootscrap-admin设置
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
                 'app01.views.func'  # 模版全局变量
             ],
         },
@@ -142,10 +151,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# 模版全局变量
 
 FUNCTION = [
     (1, "园子"),
-    (2, "家里"),
+    (2, "随笔"),
+    (3, "新闻"),
 ]
 
+# 借用admin用户使用路径
+
 AUTH_USER_MODEL = "app01.UserInfo"
+
+# 加载botscrap-admin插件
+
+BOOTSTRAP_ADMIN_SIDEBAR_MENU = True
