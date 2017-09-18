@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)http://v3.bootcss.com/examples/dashboard/ -->
+<html lang="zh-CN">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="http://v3.bootcss.com/favicon.ico">
+
+    <title>我的后台管理</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="/static/bootstrap/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/dashboard.css" rel="stylesheet">
+    <link href="/static/my-style.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="/static/ie-emulation-modes-warning.js"></script>
+    <style type="text/css">:root #content > #right > .dose > .dosesingle,
+    :root #content > #center > .dose > .dosesingle {
+        display: none !important;
+    }</style>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+    .en-markup-crop-options {
+        top: 18px !important;
+        left: 50% !important;
+        margin-left: -100px !important;
+        width: 200px !important;
+        border: 2px rgba(255, 255, 255, .38) solid !important;
+        border-radius: 4px !important;
+    }
+
+    .en-markup-crop-options div div:first-of-type {
+        margin-left: 0px !important;
+    }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="true"
+                    aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="javascript:;">我的后台管理系统</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse in" aria-expanded="true" style="">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="javascript:;">不知道写啥</a></li>
+                <li><a href="/logout/">退出登录</a></li>
+            </ul>
+            <form class="navbar-form navbar-right">
+                <input type="text" class="form-control" placeholder="点我呀...">
+            </form>
+        </div>
+    </div>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <div class="my-menu-item" href="#menu-son1" data-toggle="collapse"><a>菜单一</a></div>
+            <ul class="nav nav-sidebar collapse" id="menu-son1">
+                <li class="active"><a href="javascript:;">Overview <span
+                        class="sr-only">(current)</span></a></li>
+                <li><a href="javascript:;">Reports</a></li>
+                <li><a href="javascript:;">Analytics</a></li>
+                <li><a href="javascript:;">Export</a></li>
+            </ul>
+            <div class="my-menu-item" href="#menu-son2" data-toggle="collapse"><a>菜单二</a></div>
+            <ul class="nav nav-sidebar collapse" id="menu-son2">
+                <li><a href="javascript:;">Nav item</a></li>
+                <li><a href="javascript:;">Nav item again</a></li>
+                <li><a href="javascript:;">One more nav</a></li>
+                <li><a href="javascript:;">Another nav item</a></li>
+                <li><a href="javascript:;">More navigation</a></li>
+            </ul>
+            <div class="my-menu-item" href="#menu-son3" data-toggle="collapse"><a>菜单三</a></div>
+            <ul class="nav nav-sidebar collapse" id="menu-son3">
+                <li><a href="javascript:;">Nav item again</a></li>
+                <li><a href="javascript:;">One more nav</a></li>
+                <li><a href="javascript:;">Another nav item</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="my-panel-head">
+                    <div class="my-title">管理界面</div>
+                    <div class="pull-right my-add">
+                        <a class="btn btn-success btn-sm add_btn" href="/addArticle/">添加</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="my-table-toolbar">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label class="sr-only" for="table-search">table search</label>
+                                <input type="text" class="form-control" id="table-search" placeholder="搜索">
+                            </div>
+                            <button class="btn btn-primary">搜索</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Table -->
+                <div class="my-table-wrapper">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>标题</th>
+                            <th>评论数</th>
+                            <th>点赞数</th>
+                            <th>阅读数</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for article in articles.object_list %}
+                            <tr class="active">
+                                <th scope="row">{{ forloop.counter }}</th>
+                                <td>{{ article.name }}</td>
+                                <td>{{ article.comment_count }}</td>
+                                <td>{{ article.up_count }}</td>
+                                <td>{{ article.read_count }}</td>
+                                <td>
+                                    <button class="btn btn-sm edit_btn"><a href="javascript:;">修改</a></button>
+                                    <button class="btn btn-sm del_btn" article_id="{{ article.nid }}">删除</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                    <div class="row">
+                        <div class="col-md-7 col-xs-12 pull-right">
+                            <nav aria-label="...">
+                                <ul class=" pull-right pagination">
+                                    {% if articles.has_previous %}
+                                        <li><a href="/myEditBack/{{ request.user.username }}/?page={{ articles.previous_page_number }}">上一页</a></li>
+                                    {% endif %}
+                                    {% for page in article_obj.page_range %}
+                                        <li><a href="/myEditBack/{{ request.user.username }}/?page={{ page }}">{{ page }}</a></li>
+                                    {% endfor %}
+                                    {% if articles.has_next %}
+                                        <li><a href="/myEditBack/{{ request.user.username }}/?page={{ articles.next_page_number }}">下一页</a></li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap core JavaScript
+================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<script src="/static/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
+<script src="/static/bootstrap.min.js"></script>
+<!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+<script src="/static/holder.min.js"></script>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="/static/ie10-viewport-bug-workaround.js"></script>
+
+<script>
+    $(function () {
+
+        $(".del_btn").click(function () {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: "/del_article/",
+                data: {
+                    article_id: $(this).attr('article_id'),
+                    csrfmiddlewaretoken: '{{ csrf_token }}'// 你的formid
+                },
+                async: true,
+                success: function (data) {
+                    {#                    alert("Connection success");#}
+                    if (data.status === "success") {
+                        alert("删除成功");
+                        window.location.reload();
+                    }
+                    else {
+                        alert("删除失败");
+                    }
+                },
+                error: function (request) {
+                    alert("删除失败");
+                    window.location.reload();
+                },
+            })
+        });
+    });
+</script>
+</body>
+</html>

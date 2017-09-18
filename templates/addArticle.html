@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加文章</title>
+    <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="/static/bootstrap/homeSite.css">
+    <script src="/static/js/jquery-3.2.1.js"></script>
+    <script src="/static/bootstrap/js/bootstrap.js"></script>
+    <script src="/static/kindeditor-4.1.10/kindeditor-all.js"></script>
+
+</head>
+<body>
+
+
+<div class="container">
+
+
+    <form action="/addArticle/" method="post">
+         {% csrf_token %}
+         <h3>标题</h3>
+        <input type="text" name="title">
+        <h3>content</h3>
+
+        <textarea name="article_content" id="article_content" cols="30" rows="10"></textarea>
+
+
+        <p><input type="submit"></p>
+    </form>
+
+
+    <script>
+
+        KindEditor.create("#article_content",{
+            width:"200px",
+            height:"400px",
+            resizeType:0,
+
+            uploadJson:"/upload_file/",
+            extraFileUploadParams:{
+                "csrfmiddlewaretoken":"{{ csrf_token }}"
+            }
+
+        })
+
+    </script>
+</div>
+
+
+</body>
+</html>

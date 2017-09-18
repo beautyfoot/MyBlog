@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import auth
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from app01.admin import UserInfo as User
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
@@ -9,6 +10,7 @@ from app01 import forms
 import json
 from django.db.models import Avg, Min, Sum, Max, Count, F, Q
 from app01.models import Article, Comment, ArticleUpDown, CommentUp, Category
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 
 # 非ajax方法，且有验证码
@@ -150,7 +152,8 @@ def index(request, **kwargs):
             year_n = kwargs.get("year")
             month_n = kwargs.get("month")
             day_n = kwargs.get("day")
-            article_list = Article.objects.filter(create_time__year=year_n, create_time__month=month_n, create_time__day=day_n)
+            article_list = Article.objects.filter(create_time__year=year_n, create_time__month=month_n,
+                                                  create_time__day=day_n)
 
     return render(request, "index.html",
                   {"user": user,
@@ -160,6 +163,50 @@ def index(request, **kwargs):
                    "tag_list": tag_list,
                    "date_list": date_list,
                    })
+
+
+# 个人管理后台
+
+def myEditBack(request, usersite):
+    article_list = Article.objects.filter(blog__user__username=usersite)
+
+    article_obj = Paginator(article_list, 3)
+    page = request.GET.get('page')
+    try:
+        articles = article_obj.page(page)
+    except PageNotAnInteger:
+        articles = article_obj.page(1)
+    except EmptyPage:
+        articles = article_obj.page(article_obj.num_pages)
+
+    return render(request, "myEditBack.html", {
+        "article_obj": article_obj,
+        "articles": articles
+    })
+
+
+# 添加文章
+
+def addArticle(request):
+    if request.method == "POST":
+        content = request.POST.get("article_content")
+
+        return render(request, "showContent.html", {"content": content})
+
+    return render(request, "addArticle.html")
+
+
+# 删除文章
+
+def delArticle(request):
+    if request.method == 'POST':
+        try:
+            article_id = request.POST.get('article_id', 0)
+            Article.objects.filter(nid=article_id).delete()
+        except Exception as e:
+            print(e)
+            return HttpResponse('{"status":"fail"}', content_type='application/json')
+        return HttpResponse('{"status":"success"}', content_type='application/json')
 
 
 # 个人界面
@@ -189,7 +236,8 @@ def showTime(request, **kwargs):
             year_n = kwargs.get("year")
             month_n = kwargs.get("month")
             day_n = kwargs.get("day")
-            article_list = article_list.filter(create_time__year=year_n, create_time__month=month_n, create_time__day=day_n)
+            article_list = article_list.filter(create_time__year=year_n, create_time__month=month_n,
+                                               create_time__day=day_n)
 
     return render(request, "showTime.html",
                   {"username": username,
@@ -199,7 +247,6 @@ def showTime(request, **kwargs):
                    "date_list": date_list,
                    "article_num": article_num,
                    })
-
 
 
 # 文章内容
@@ -214,6 +261,54 @@ def articleDetail(request, user_site, article_id):
     })
 
 
+# 文章内容，第二种：多级评论
+def articleDetail2(request, user_site, article_id):
+    if request.is_ajax():
+
+        comment_list = Comment.objects.filter(article_id=article_id).values("nid", "content", "parent_id_id", "create_time", "up_count", "down_count", "user__nickname")
+        # print("comment_list", comment_list)
+
+        import collections
+
+        comment_dict = collections.OrderedDict()
+
+        i = 0
+        for comment in comment_list:
+            i +=1
+            comment["children_comments"] = []
+            comment["id"] = i
+            comment["create_time"] = str(comment["create_time"])[:16]
+            comment_dict[comment["nid"]] = comment
+
+        ret = []
+
+        for comment in comment_dict:
+            if comment_dict[comment]["parent_id_id"]:
+                pid = comment_dict[comment]["parent_id_id"]
+                comment_dict[pid]["children_comments"].append(comment_dict[comment])
+            else:
+                ret.append(comment_dict[comment])
+        print("ret", ret)
+
+        return HttpResponse(json.dumps(ret))
+
+    # comment_list = Comment.objects.all()
+    #
+    # # print("comment_list", comment_list)  # [obj,obj]
+    #
+    # comment_list2 = Comment.objects.values("nid", "content", "parent_id_id")
+    #
+    # print("comment_list2", comment_list2)
+
+    article_obj = Article.objects.filter(nid=article_id).first()
+    comment_list = Comment.objects.filter(article_id=article_id)
+
+    return render(request, "articleDetail2.html", {
+        "comment_list": comment_list,
+        "article_obj": article_obj
+    })
+
+
 # 文章点赞
 
 def articleUpDown(request):
@@ -225,7 +320,7 @@ def articleUpDown(request):
         response["flag"] = False
     else:
         ArticleUpDown.objects.create(user_id=user_id, article_id=article_id)
-        Article.objects.filter(nid=article_id).update(up_count=F("up_count")+1)
+        Article.objects.filter(nid=article_id).update(up_count=F("up_count") + 1)
 
     return HttpResponse(json.dumps(response))
 
@@ -255,7 +350,8 @@ def comment(request):
 
     if request.POST.get("parent_comment_id"):
         parent_comment_id = int(request.POST.get("parent_comment_id"))
-        comment_obj = Comment.objects.create(user_id=user_id, article_id=article_id, content=content, parent_id_id=parent_comment_id)
+        comment_obj = Comment.objects.create(user_id=user_id, article_id=article_id, content=content,
+                                             parent_id_id=parent_comment_id)
     else:
         comment_obj = Comment.objects.create(user_id=user_id, article_id=article_id, content=content)
     Article.objects.filter(nid=article_id).update(comment_count=F("comment_count") + 1)
@@ -266,6 +362,7 @@ def comment(request):
                  "down_count": comment_obj.down_count}
 
     return HttpResponse(json.dumps(responses))
+
 
 # 验证码
 
@@ -300,7 +397,6 @@ def valid_code(request):
     request.session["valid_code"] = valid_code
 
     return HttpResponse(f.getvalue())
-
 
 
 # 模版全局变量

@@ -149,6 +149,9 @@ class Comment(models.Model):
         verbose_name = "评论"
         verbose_name_plural = verbose_name
 
+    def __unicode__(self):
+        return self.nid
+
 
 class ArticleUpDown(models.Model):
     """
